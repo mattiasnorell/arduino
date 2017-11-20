@@ -4,7 +4,7 @@ const int LED_PINS[4] = {3, 4, 5, 6};
 
 int speedIndex = 0;
 int sequencerSpeed[3] = {500, 1000, 2000};
-int sequenceIndex = 2;
+int sequenceIndex = 0;
 int patternIndex = 0;
 int sequencerData[4][4][4] =                          // Max 4 different patterns per sequence
 {
@@ -32,9 +32,9 @@ int sequencerData[4][4][4] =                          // Max 4 different pattern
 };
 
 void setup() {
-  Serial.begin(9600);
+  int ledCount = sizeof(LED_PINS) / sizeof(int);
 
-  for (int i = 0; i < 4; i++) {
+  for (int i = 0; i < ledCount; i++) {
     pinMode(LED_PINS[i], OUTPUT);
   }
 
