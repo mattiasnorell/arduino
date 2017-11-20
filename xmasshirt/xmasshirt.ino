@@ -4,7 +4,8 @@ const int LED_PINS[4] = {3, 4, 5, 6};
 
 int speedIndex = 0;
 int sequencerSpeed[3] = {500, 1000, 2000};
-int sequenceIndex = 0;                                // Current sequence index
+int sequenceIndex = 2;
+int patternIndex = 0;
 int sequencerData[4][4][4] =                          // Max 4 different patterns per sequence
 {
   {
@@ -31,6 +32,8 @@ int sequencerData[4][4][4] =                          // Max 4 different pattern
 };
 
 void setup() {
+  Serial.begin(9600);
+
   for (int i = 0; i < 4; i++) {
     pinMode(LED_PINS[i], OUTPUT);
   }
@@ -40,8 +43,16 @@ void setup() {
 }
 
 void loop() {
+  if (digitalRead(SPEED_BUTTON_PIN == HIGH)) {
+    changeSpeed();
+  }
+
+  if (digitalRead(PATTERN_BUTTON_PIN == HIGH)) {
+    changeSequence();
+  }
+
   sequencer();
-  
+
   delay(sequencerSpeed[speedIndex]);
 }
 
@@ -54,6 +65,7 @@ void changeSpeed() {
 }
 
 void changeSequence() {
+  patternIndex = 0;
   sequenceIndex++;
 
   if (sequenceIndex >= sizeof(sequencerData)) {
@@ -63,12 +75,28 @@ void changeSequence() {
 
 void sequencer() {
 
-  Serial.println(sizeof(sequencerData[sequenceIndex]));
+  // SEQUENCE     sequencerData[sequenceIndex]
+  // PATTERN      sequencerData[sequenceIndex][patternIndex]
+  // LED          sequencerData[sequenceIndex][patternIndex][i]
 
-  for (int i = 0; i < sizeof(sequencerData[sequenceIndex]); i++) {
-    for (int ii = 0; ii < sizeof(sequencerData[sequenceIndex]); ii++) {
-      Serial.println("Sequence");
-      Serial.println(ii);
-    }
+  int arraySize = sizeof(sequencerData[sequenceIndex]) / sizeof(sequencerData[sequenceIndex][patternIndex]);
+
+  for (int i = 0; i < arraySize; i++) {
+    setLedState(i, sequencerData[sequenceIndex][patternIndex][i]);
+  }
+
+  patternIndex++;
+
+  if (patternIndex >= arraySize) {
+    patternIndex = 0;
   }
 }
+
+void setLedState(int pin, int state) {
+  if (state == 1) {
+    digitalWrite(pin, HIGH);
+  } else {
+    digitalWrite(pin, LOW);
+  }
+}
+
