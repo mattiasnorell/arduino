@@ -2,11 +2,14 @@ const int SPEED_BUTTON_PIN = 1;
 const int PATTERN_BUTTON_PIN = 2;
 const int LED_PINS[4] = {3, 4, 5, 6};
 
+bool isSpeedButtonPressed = false;
+bool isPatternButtonPressed = false;
+
 int speedIndex = 0;
-int sequencerSpeed[3] = {500, 1000, 2000};
+int sequencerSpeed[6] = {500, 1000, 2000, 3000, 5000, 10000};
 int sequenceIndex = 0;
 int patternIndex = 0;
-int sequencerData[4][4][4] =                          // Max 4 different patterns per sequence
+int sequencerData[8][4][12] =                          // Due to memory/stability issues max 8 sequences, 4 different patterns per sequence and 16 leds per pattern
 {
   {
     {1, 0, 0, 0},
@@ -43,17 +46,31 @@ void setup() {
 }
 
 void loop() {
-  if (digitalRead(SPEED_BUTTON_PIN == HIGH)) {
-    changeSpeed();
-  }
+ 
 
-  if (digitalRead(PATTERN_BUTTON_PIN == HIGH)) {
-    changeSequence();
-  }
+  readButtonInput();
 
-  sequencer();
+  if(!isSpeedButtonPressed || !isPatternButtonPressed){
+    sequencer();
+  }
 
   delay(sequencerSpeed[speedIndex]);
+}
+
+void readButtonInput(){
+   if (digitalRead(SPEED_BUTTON_PIN == HIGH) && !isSpeedButtonPressed) {
+    isSpeedButtonPressed = true;
+    changeSpeed();
+  }else if(digitalRead(SPEED_BUTTON_PIN == LOW) && isSpeedButtonPressed){
+    isSpeedButtonPressed = false;
+  }
+
+  if (digitalRead(PATTERN_BUTTON_PIN == HIGH) && !isPatternButtonPressed) {
+    isPatternButtonPressed = true;
+    changeSequence();
+  }else if(digitalRead(PATTERN_BUTTON_PIN == LOW) && isPatternButtonPressed){
+    isPatternButtonPressed = false;
+  }
 }
 
 void changeSpeed() {
