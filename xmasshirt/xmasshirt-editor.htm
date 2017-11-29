@@ -19,6 +19,8 @@
                 display: inline-block;
                 background-color: #ccc;
                 cursor: pointer;
+                border: 0;
+                border-radius: 4px;
             }
 
             .editor{
@@ -200,6 +202,7 @@
             Speed: <input type="number" value="500" id="interval-speed">
             <hr/>
             <button onclick="addPattern()">Add pattern</button>
+            <button onclick="copyPattern()">Copy pattern</button>
             <button onclick="clearPattern()">Clear pattern</button>
             <button onclick="removePattern()">Remove pattern</button>
             <button onclick="load()">Load</button>
@@ -249,7 +252,41 @@
                 
                 editorContainer.appendChild(checkBox);
             }
-    
+            
+            document.addEventListener('keydown', function(event) {
+                if(event.keyCode == 80) {
+                 togglePlay();   
+                }
+
+                if(event.keyCode == 37) {
+                    previousPattern();
+                }                
+
+                if(event.keyCode == 39) {
+                    nextPattern();
+                }  
+
+                if(event.keyCode == 65) {
+                    addPattern();
+                }  
+
+                if(event.keyCode == 82) {
+                    removePattern();
+                } 
+
+                if(event.keyCode == 67) {
+                    copyPattern();
+                }                
+                
+                if(event.keyCode == 69) {
+                    exportPatterns();
+                }  
+
+                if(event.keyCode == 76) {
+                    load();
+                }  
+            });
+
             addPattern();
             update();
         }
@@ -334,6 +371,14 @@
             playInterval = null;
         }
 
+        function togglePlay(){
+            if(playInterval){
+                stop();
+            }else{
+                play();
+            }
+        }
+
         function updatePattern(loopIndex, patternIndex, value){  
             if(loopIndex == null){
                 loopIndex = currentPattern;
@@ -356,6 +401,18 @@
 
             pattern[pattern.length] = model;
             currentPattern = pattern.length - 1;
+
+            update();
+        }
+
+        function copyPattern(){
+            var model = []
+            
+            for(var i = 0; i < pattern[currentPattern].length; i++){
+                model[i] = pattern[currentPattern][i];
+            }
+
+            pattern[pattern.length] = model;
 
             update();
         }
