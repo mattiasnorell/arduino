@@ -205,8 +205,10 @@
             <button onclick="copyPattern()">Copy pattern</button>
             <button onclick="clearPattern()">Clear pattern</button>
             <button onclick="removePattern()">Remove pattern</button>
+            <hr/>
             <button onclick="load()">Load</button>
             <button onclick="exportPatterns()">Export</button>
+            <button onclick="exportArduinoPatterns()">Export Arduino data</button>
         </div>
     </body>
 
@@ -443,6 +445,10 @@
 
         function exportPatterns(){
             window.prompt("Copy to clipboard: ", JSON.stringify(pattern));
+        }
+
+        function exportArduinoPatterns(){
+            window.prompt("Copy to clipboard: ", JSON.stringify(pattern).replace(/[\[]/g,"{").replace(/[\]]/g,"}"));
         }
 
         function updateSequencer(){
